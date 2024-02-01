@@ -8,7 +8,7 @@ public:
 	GameEngine();
 	~GameEngine();
 
-	void init(const char* title, int xPos, int yPos, int width, int height, int flag);
+	void init(const char* title, int xPos, int yPos, int width, int height, bool isFullScreen);
 	void update();
 	void handleEvents();
 	void render();
@@ -18,6 +18,8 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	bool isRunning;
+	int cnt;
+	int xPosOfPen, yPosOfPen;
 };
 
 
