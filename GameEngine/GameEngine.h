@@ -1,7 +1,9 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 #include <SDL.h>
+#include <SDL_image.h>
 #include "Header.h"
+
 
 class GameEngine {
 public:
@@ -17,6 +19,7 @@ public:
 private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+
 	bool isRunning;
 	int cnt;
 	int xPosOfPen, yPosOfPen;

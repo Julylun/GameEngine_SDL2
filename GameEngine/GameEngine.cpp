@@ -1,5 +1,10 @@
 #include "GameEngine.h"
 
+
+
+SDL_Texture* playerTexture;
+SDL_Rect* playerMargin;
+
 GameEngine::GameEngine()
 {
 	std::cout << "[GameEngine.cpp]: GameEngine is created! \n";
@@ -21,6 +26,11 @@ void GameEngine::init(const char* title, int xPos, int yPos, int width, int heig
 	xPosOfPen = 0;
 	yPosOfPen = 0;
 	int flag = 0;
+	playerMargin = new SDL_Rect();
+	playerMargin->x = 0;
+	playerMargin->y = 0;
+	playerMargin->w = 100;
+	playerMargin->h = 100;
 
 	if (isFullScreen == true) flag = SDL_WINDOW_FULLSCREEN;
 
@@ -42,10 +52,24 @@ void GameEngine::init(const char* title, int xPos, int yPos, int width, int heig
 		}
 		
 		std::cout << "[GameEngine.cpp]<init>: renderer is created\n";
+		
+		std::cout << "[GameEngine.cpp]<init>: Adding texture into window\n";
+		SDL_Surface* tempSurface = IMG_Load("assest/player.png");
+		if (tempSurface == NULL) {
+			std::cout << "[GameEngine.cpp]<init>: Loading image from file path to tempSurface is failed! - " << SDL_GetError() << "\n";
+			GameEngine::isRunning = false;
+			return;
+		}
+		playerTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+		SDL_FreeSurface(tempSurface);
+
 		std::cout << "[GameEngine.cpp]<init>: Initialized\n";
 		GameEngine::isRunning = true;
 		return;
 	}
+
+	
+
 	
 	GameEngine::isRunning = false;
 	return;
@@ -68,26 +92,30 @@ void GameEngine::handleEvents()
 
 void GameEngine::update()
 {
-	std::cout << "updated!\n";
+	//std::cout << "updated!\n";
 	cnt++;
 	xPosOfPen++;
 	yPosOfPen++;
+
+	playerMargin->x++;
+	playerMargin->y++;
+
 	std::cout << cnt <<"\n";
 }
 
 void GameEngine::render()
 {
-	std::cout << "Rendered!\n";
+	//std::cout << "Rendered!\n";
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_Rect* rect = new SDL_Rect();
-	SDL_RenderDrawRect(renderer, rect);
-
+	
+	SDL_RenderCopy(renderer, playerTexture, NULL, playerMargin);
 	SDL_RenderPresent(renderer);
-	SDL_Delay(100);
+	//SDL_Delay(100);
 }
 
 bool GameEngine::running()
-{
+{	
+	
 	return isRunning;
 }
