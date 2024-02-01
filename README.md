@@ -1,4 +1,4 @@
-# READE ME
+# README
  **GameEngine_SDL2** is a project used to learn how to make a game from scratch by `Julylun`
 
 
