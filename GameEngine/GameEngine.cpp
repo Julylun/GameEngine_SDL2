@@ -2,16 +2,20 @@
 
 
 
-SDL_Texture* playerTexture;
-SDL_Rect* playerMargin;
+
+SDL_Renderer* GameEngine::renderer = nullptr;
+GameObject* player;
+GameObject* enermy;
 
 GameEngine::GameEngine()
 {
+	setDebug(true);
 	std::cout << "[GameEngine.cpp]: GameEngine is created! \n";
 }
 
 GameEngine::~GameEngine()
 {
+	
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
@@ -26,11 +30,8 @@ void GameEngine::init(const char* title, int xPos, int yPos, int width, int heig
 	xPosOfPen = 0;
 	yPosOfPen = 0;
 	int flag = 0;
-	playerMargin = new SDL_Rect();
-	playerMargin->x = 0;
-	playerMargin->y = 0;
-	playerMargin->w = 100;
-	playerMargin->h = 100;
+	
+	
 
 	if (isFullScreen == true) flag = SDL_WINDOW_FULLSCREEN;
 
@@ -50,20 +51,16 @@ void GameEngine::init(const char* title, int xPos, int yPos, int width, int heig
 			GameEngine::isRunning = false;
 			return;
 		}
-		
 		std::cout << "[GameEngine.cpp]<init>: renderer is created\n";
 		
 		std::cout << "[GameEngine.cpp]<init>: Adding texture into window\n";
-		SDL_Surface* tempSurface = IMG_Load("assest/player.png");
-		if (tempSurface == NULL) {
-			std::cout << "[GameEngine.cpp]<init>: Loading image from file path to tempSurface is failed! - " << SDL_GetError() << "\n";
-			GameEngine::isRunning = false;
-			return;
-		}
-		playerTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
-		SDL_FreeSurface(tempSurface);
+		player = new GameObject("assest/player.png");
+		enermy = new GameObject("assest/enermy.png");
+		enermy->setPosition(30, 30);
+
 
 		std::cout << "[GameEngine.cpp]<init>: Initialized\n";
+		debug();
 		GameEngine::isRunning = true;
 		return;
 	}
@@ -94,12 +91,8 @@ void GameEngine::update()
 {
 	//std::cout << "updated!\n";
 	cnt++;
-	xPosOfPen++;
-	yPosOfPen++;
-
-	playerMargin->x++;
-	playerMargin->y++;
-
+	player->update();
+	enermy->update();
 	std::cout << cnt <<"\n";
 }
 
@@ -108,14 +101,30 @@ void GameEngine::render()
 	//std::cout << "Rendered!\n";
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	
-	SDL_RenderCopy(renderer, playerTexture, NULL, playerMargin);
-	SDL_RenderPresent(renderer);
+
+	player->render();
+	enermy->render();
+
+	SDL_RenderPresent(GameEngine::renderer);
 	//SDL_Delay(100);
 }
 
 bool GameEngine::running()
 {	
-	
 	return isRunning;
+}
+
+void GameEngine::setDebug(bool isTrue) {
+	isDebugging = isTrue;
+}
+
+void GameEngine::debug() {
+	if (isDebugging) {
+		player->setDebug(true);
+		enermy->setDebug(true);
+	}
+}
+
+void GameEngine::printDebugging() {
+	std::cout << "Player position: (" << player->getDstRect().x << "," << player->getDstRect().y << ")\n";
 }
